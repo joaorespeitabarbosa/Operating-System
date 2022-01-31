@@ -9,6 +9,8 @@ int main(int argc, char **argv) {
 
     char *pipename = argv[1];
     printf("Starting TecnicoFS server with pipe called %s\n", pipename);
+    //unlink
+    //mkfifo fazer verificacao(!=0)
 
     /* TO DO */
 

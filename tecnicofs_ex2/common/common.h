@@ -19,4 +19,6 @@ enum {
     TFS_OP_CODE_SHUTDOWN_AFTER_ALL_CLOSED = 7
 };
 
+//criar estrutturas para as funcoes (mount, open, close, ...)
+
 #endif /* COMMON_H */

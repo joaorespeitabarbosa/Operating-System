@@ -337,3 +337,14 @@ open_file_entry_t *get_open_file_entry(int fhandle) {
     }
     return &open_file_table[fhandle];
 }
+
+// Returns number of open files in FS
+int get_number_of_open_files() {
+    int count = 0;
+    for (size_t i = 0; i < MAX_OPEN_FILES; i++) {
+        if (free_open_file_entries[i] == TAKEN)
+            count++;
+    }
+    printf("%d\n",count);
+    return count;
+}

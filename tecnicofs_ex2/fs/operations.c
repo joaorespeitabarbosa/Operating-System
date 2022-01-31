@@ -6,11 +6,14 @@
 #include <string.h>
 
 static pthread_mutex_t single_global_lock;
+static pthread_cond_t cond_global_lock;
 
 int tfs_init() {
     state_init();
 
     if (pthread_mutex_init(&single_global_lock, 0) != 0)
+        return -1;
+    if (pthread_cond_init(&cond_global_lock, NULL) != 0)
         return -1;
 
     /* create root inode */
@@ -27,6 +30,9 @@ int tfs_destroy() {
     if (pthread_mutex_destroy(&single_global_lock) != 0) {
         return -1;
     }
+    if (pthread_cond_destroy(&cond_global_lock) != 0) {
+        return -1;
+    }
     return 0;
 }
 
@@ -36,6 +42,14 @@ static bool valid_pathname(char const *name) {
 
 int tfs_destroy_after_all_closed() {
     /* TO DO: implement this */
+    pthread_mutex_lock(&single_global_lock);
+    while (get_number_of_open_files() != 0) {
+        pthread_cond_wait(&cond_global_lock, &single_global_lock);
+    }
+    if (tfs_destroy() != 0) {
+        return -1;
+    }
+    pthread_mutex_unlock(&single_global_lock);
     return 0;
 }
 
@@ -128,7 +142,7 @@ int tfs_close(int fhandle) {
     int r = remove_from_open_file_table(fhandle);
     if (pthread_mutex_unlock(&single_global_lock) != 0)
         return -1;
-
+    pthread_cond_broadcast(&cond_global_lock); //
     return r;
 }
 

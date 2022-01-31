@@ -345,6 +345,5 @@ int get_number_of_open_files() {
         if (free_open_file_entries[i] == TAKEN)
             count++;
     }
-    printf("%d\n",count);
     return count;
 }

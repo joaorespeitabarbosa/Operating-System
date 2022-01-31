@@ -46,10 +46,10 @@ int tfs_destroy_after_all_closed() {
     while (get_number_of_open_files() != 0) {
         pthread_cond_wait(&cond_global_lock, &single_global_lock);
     }
+    pthread_mutex_unlock(&single_global_lock);
     if (tfs_destroy() != 0) {
         return -1;
     }
-    pthread_mutex_unlock(&single_global_lock);
     return 0;
 }
 
@@ -142,7 +142,7 @@ int tfs_close(int fhandle) {
     int r = remove_from_open_file_table(fhandle);
     if (pthread_mutex_unlock(&single_global_lock) != 0)
         return -1;
-    pthread_cond_broadcast(&cond_global_lock); //
+    pthread_cond_broadcast(&cond_global_lock);
     return r;
 }
 

@@ -19,6 +19,8 @@ enum {
     TFS_OP_CODE_SHUTDOWN_AFTER_ALL_CLOSED = 7
 };
 
+#define NUMBER_OF_SESSIONS 10
+
 //criar estrutturas para as funcoes (mount, open, close, ...)
 
 #endif /* COMMON_H */

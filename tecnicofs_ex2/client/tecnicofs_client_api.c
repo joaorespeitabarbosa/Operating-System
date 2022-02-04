@@ -7,7 +7,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-int client_session_id, f_server, f_client, f_handle;
+int client_session_id, f_server, f_client, f_handle, res;
+ssize_t res_ld;
 
 int tfs_mount(char const *client_pipe_path, char const *server_pipe_path) {
     
@@ -18,7 +19,7 @@ int tfs_mount(char const *client_pipe_path, char const *server_pipe_path) {
     memset(buffer, '\0', sizeof(buffer));
     memcpy(buffer, "1", sizeof(char));
     memcpy(buffer+sizeof(char), client_pipe_path, strlen(client_pipe_path));
-
+    
     f_server = open(server_pipe_path, O_WRONLY);
     write(f_server, &buffer, sizeof(buffer));
 
@@ -59,21 +60,54 @@ int tfs_open(char const *name, int flags) {
 }
 
 int tfs_close(int fhandle) {
-    /* TODO: Implement this */
-    return -1;
+    
+    char buffer[4];
+    memset(buffer, '\0', sizeof(buffer));
+    memcpy(buffer, "4", sizeof(char));
+    sprintf(buffer+sizeof(char), "%d%d", client_session_id, fhandle);
+
+    write(f_server, &buffer, sizeof(buffer));
+    read(f_client, &res, sizeof(res));
+    return res;
 }
 
 ssize_t tfs_write(int fhandle, void const *buffer, size_t len) {
-    /* TODO: Implement this */
-    return -1;
+    
+    char buffer_w[5+len];
+    memset(buffer_w, '\0', sizeof(buffer_w));
+    memcpy(buffer_w, "5", sizeof(char));
+    sprintf(buffer_w+sizeof(char), "%d%d%ld", client_session_id, fhandle, len);
+    memcpy(buffer_w+(4*sizeof(char)), buffer, sizeof(char)*strlen(buffer));
+    
+    write(f_server, &buffer_w, sizeof(buffer_w));
+    read(f_client, &res_ld, sizeof(res_ld));
+
+    return res_ld;
 }
 
 ssize_t tfs_read(int fhandle, void *buffer, size_t len) {
-    /* TODO: Implement this */
-    return -1;
+    
+    char buffer_r[10];
+    ssize_t len_r;
+    memset(buffer_r, '\0', sizeof(buffer_r));
+    memcpy(buffer_r, "6", sizeof(char));
+    sprintf(buffer_r+sizeof(char), "%d%d%ld", client_session_id, fhandle, len);
+
+    write(f_server, &buffer_r, sizeof(buffer_r));
+    read(f_client, &len_r, sizeof(len_r));
+    read(f_client, buffer, len_r*sizeof(char));
+
+    return len_r;
 }
 
 int tfs_shutdown_after_all_closed() {
-    /* TODO: Implement this */
-    return -1;
+    
+    char buffer[3];
+    memset(buffer, '\0', sizeof(buffer));
+    memcpy(buffer, "7", sizeof(char));
+    sprintf(buffer+sizeof(char), "%d", client_session_id);
+    
+    write(f_server, &buffer, sizeof(buffer));
+    read(f_client, &res, sizeof(res));
+    return res;
 }

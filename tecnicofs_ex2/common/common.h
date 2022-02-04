@@ -27,7 +27,6 @@ typedef struct {
     int flag;
 } open_struct;
 
-
 #define NUMBER_OF_SESSIONS 10
 
 //criar estrutturas para as funcoes (mount, open, close, ...)

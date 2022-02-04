@@ -41,7 +41,6 @@ static bool valid_pathname(char const *name) {
 }
 
 int tfs_destroy_after_all_closed() {
-    /* TO DO: implement this */
     pthread_mutex_lock(&single_global_lock);
     while (get_number_of_open_files() != 0) {
         pthread_cond_wait(&cond_global_lock, &single_global_lock);

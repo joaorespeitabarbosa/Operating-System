@@ -59,8 +59,13 @@ int main(int argc, char **argv) {
 
             case TFS_OP_CODE_OPEN:
                 memset(&openbufferstruct.name, '\0', sizeof(openbufferstruct.name));
-                memccpy(&openbufferstruct.name, buffer+(2*sizeof(char)), ' ',sizeof(openbufferstruct.name));
-                openbufferstruct.name[strlen(openbufferstruct.name)-1] = '\0';
+                memcpy(&openbufferstruct.name, buffer+(2*sizeof(char)), sizeof(openbufferstruct.name));
+                for (int j=0; j<sizeof(openbufferstruct.name); j++) {
+                    if (openbufferstruct.name[i] == ' ') {
+                        openbufferstruct.name[i] = '\0';
+                        j = sizeof(openbufferstruct.name);
+                    }
+                }
                 openbufferstruct.flag = atoi(buffer+(42*sizeof(char)));
                 f_handle = tfs_open(openbufferstruct.name, openbufferstruct.flag);
                 session_id = atoi(buffer+sizeof(char));

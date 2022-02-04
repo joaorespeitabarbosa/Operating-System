@@ -19,6 +19,15 @@ enum {
     TFS_OP_CODE_SHUTDOWN_AFTER_ALL_CLOSED = 7
 };
 
+/*
+ * Open Struct
+ */
+typedef struct {
+    char name[40];
+    int flag;
+} open_struct;
+
+
 #define NUMBER_OF_SESSIONS 10
 
 //criar estrutturas para as funcoes (mount, open, close, ...)

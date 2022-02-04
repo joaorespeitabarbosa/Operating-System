@@ -22,8 +22,12 @@ int main(int argc, char **argv) {
         return 1;
     }
     
-    tfs_mount(argv[1], argv[2]);
-    tfs_unmount();
+    assert(tfs_mount(argv[1], argv[2]) == 0);
+    f = tfs_open(path, TFS_O_CREAT);
+    assert(f != -1);
+    assert(tfs_unmount() == 0);
+    printf("Successful test.\n");
+
     /*
     assert(tfs_mount(argv[1], argv[2]) == 0);
 

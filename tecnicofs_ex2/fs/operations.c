@@ -74,6 +74,8 @@ int tfs_lookup(char const *name) {
 }
 
 static int _tfs_open_unsynchronized(char const *name, int flags) {
+    printf("-----name:%s-------\n", name);
+    printf("-----flag:%d-------\n", flags);
     int inum;
     size_t offset;
 
